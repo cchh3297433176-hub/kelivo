@@ -895,16 +895,9 @@ class ATagMd extends InlineMd {
       return const TextSpan();
     }
 
-    // First try to find the basic pattern
-    // final basicMatch = RegExp(r'(?<!\!)\[(.*)\]\(').firstMatch(text.trim());
-    // if (basicMatch == null) {
-    //   return const TextSpan();
-    // }
-
     final linkText = text.substring(start, end);
     final urlStart = end + 2;
 
-    // Now find the balanced closing parenthesis
     int parenCount = 0;
     int urlEnd = urlStart;
 
@@ -915,7 +908,6 @@ class ATagMd extends InlineMd {
         parenCount++;
       } else if (char == ')') {
         if (parenCount == 0) {
-          // This is the closing parenthesis of the link
           urlEnd = i;
           break;
         } else {
@@ -925,7 +917,6 @@ class ATagMd extends InlineMd {
     }
 
     if (urlEnd == urlStart) {
-      // No closing parenthesis found
       return const TextSpan();
     }
 
@@ -943,10 +934,8 @@ class ATagMd extends InlineMd {
     );
     var theme = GptMarkdownTheme.of(context);
 
-    // Use custom builder if provided
     WidgetSpan? child;
     if (builder != null) {
-      // Build a styled span to hand off to the custom linkBuilder.
       final linkStyle = (config.style ?? const TextStyle()).copyWith(
         color: theme.linkColor,
         decorationColor: theme.linkColor,
@@ -977,8 +966,6 @@ class ATagMd extends InlineMd {
       );
     }
 
-    // Default rendering — LinkButton rebuilds the span on every hover change
-    // so bold/italic text inside a link also picks up the hover colour.
     child ??= WidgetSpan(
       alignment: PlaceholderAlignment.baseline,
       baseline: TextBaseline.alphabetic,
@@ -1013,7 +1000,7 @@ class ATagMd extends InlineMd {
   }
 }
 
-/// Image component
+/// Image component (升级版：支持优雅圆角卡片、柔和阴影、微光占位与原生全屏查看器)
 class ImageMd extends InlineMd {
   @override
   RegExp get exp => RegExp(r"\!\[[^\[\]]*\]\([^\s]*\)");
@@ -1024,7 +1011,6 @@ class ImageMd extends InlineMd {
     String text,
     final GptMarkdownConfig config,
   ) {
-    // First try to find the basic pattern
     final basicMatch = RegExp(r'\!\[([^\[\]]*)\]\(').firstMatch(text.trim());
     if (basicMatch == null) {
       return const TextSpan();
@@ -1033,7 +1019,6 @@ class ImageMd extends InlineMd {
     final altText = basicMatch.group(1) ?? '';
     final urlStart = basicMatch.end;
 
-    // Now find the balanced closing parenthesis
     int parenCount = 0;
     int urlEnd = urlStart;
 
@@ -1044,7 +1029,6 @@ class ImageMd extends InlineMd {
         parenCount++;
       } else if (char == ')') {
         if (parenCount == 0) {
-          // This is the closing parenthesis of the image
           urlEnd = i;
           break;
         } else {
@@ -1054,7 +1038,6 @@ class ImageMd extends InlineMd {
     }
 
     if (urlEnd == urlStart) {
-      // No closing parenthesis found
       return const TextSpan();
     }
 
@@ -1072,35 +1055,150 @@ class ImageMd extends InlineMd {
     if (config.imageBuilder != null) {
       image = config.imageBuilder!(context, url, width, height);
     } else {
-      image = SizedBox(
-        width: width,
-        height: height,
-        child: Image(
-          image: NetworkImage(url),
-          loadingBuilder: (
-            BuildContext context,
-            Widget child,
-            ImageChunkEvent? loadingProgress,
-          ) {
-            if (loadingProgress == null) {
-              return child;
-            }
-            return CustomImageLoading(
-              progress:
-                  loadingProgress.expectedTotalBytes != null
-                      ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes!
-                      : 1,
-            );
-          },
-          fit: BoxFit.fill,
-          errorBuilder: (context, error, stackTrace) {
-            return const CustomImageError();
-          },
-        ),
-      );
+      image = _buildInteractiveImageCard(context, url, width, height);
     }
     return WidgetSpan(alignment: PlaceholderAlignment.bottom, child: image);
+  }
+
+  static Widget _buildInteractiveImageCard(
+    BuildContext context,
+    String url,
+    double? width,
+    double? height,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      child: GestureDetector(
+        onTap: () => _openFullScreenViewer(context, url),
+        child: Container(
+          constraints: BoxConstraints(
+            maxWidth: width ?? 320,
+            maxHeight: height ?? 400,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 8,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Stack(
+              alignment: Alignment.bottomRight,
+              children: [
+                Image(
+                  image: NetworkImage(url),
+                  width: width,
+                  height: height,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    final progress = loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                        : 0.5;
+                    return Container(
+                      width: width ?? 240,
+                      height: height ?? 240,
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.4),
+                      child: Center(
+                        child: CustomImageLoading(progress: progress),
+                      ),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: width ?? 200,
+                      height: height ?? 140,
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                      child: const Center(child: CustomImageError()),
+                    );
+                  },
+                ),
+                Positioned(
+                  right: 8,
+                  bottom: 8,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.55),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.fullscreen, color: Colors.white, size: 14),
+                        SizedBox(width: 2),
+                        Text(
+                          '查看原图',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  static void _openFullScreenViewer(BuildContext context, String url) {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        opaque: false,
+        barrierDismissible: true,
+        pageBuilder: (ctx, anim1, anim2) {
+          return Scaffold(
+            backgroundColor: Colors.black.withOpacity(0.92),
+            body: Stack(
+              children: [
+                Center(
+                  child: InteractiveViewer(
+                    minScale: 0.8,
+                    maxScale: 4.0,
+                    child: Image(
+                      image: NetworkImage(url),
+                      fit: BoxFit.contain,
+                      loadingBuilder: (c, child, progress) {
+                        if (progress == null) return child;
+                        return const Center(
+                          child: CircularProgressIndicator(color: Colors.white),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.close, color: Colors.white, size: 28),
+                          onPressed: () => Navigator.of(ctx).pop(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
   }
 }
 
@@ -1129,18 +1227,15 @@ class TableMd extends BlockMd {
             )
             .toList();
 
-    // Check if table has a header and separator row
     bool hasHeader = value.length >= 2;
     List<TextAlign> columnAlignments = [];
 
     if (hasHeader) {
-      // Parse alignment from the separator row (second row)
       var separatorRow = value[1];
       columnAlignments = List.generate(separatorRow.length, (index) {
         String separator = separatorRow[index] ?? "";
         separator = separator.trim();
 
-        // Check for alignment indicators
         bool hasLeftColon = separator.startsWith(':');
         bool hasRightColon = separator.endsWith(':');
 
@@ -1151,7 +1246,7 @@ class TableMd extends BlockMd {
         } else if (hasLeftColon) {
           return TextAlign.left;
         } else {
-          return TextAlign.left; // Default alignment
+          return TextAlign.left;
         }
       });
     }
@@ -1167,7 +1262,6 @@ class TableMd extends BlockMd {
       return Text("", style: config.style);
     }
 
-    // Ensure we have alignment for all columns
     while (columnAlignments.length < maxCol) {
       columnAlignments.add(TextAlign.left);
     }
@@ -1221,7 +1315,6 @@ class TableMd extends BlockMd {
                   .asMap()
                   .entries
                   .where((entry) {
-                    // Skip the separator row (second row) from rendering
                     if (hasHeader && entry.key == 1) {
                       return false;
                     }
@@ -1246,7 +1339,6 @@ class TableMd extends BlockMd {
                           return const SizedBox();
                         }
 
-                        // Apply alignment based on column alignment
                         Widget content = Padding(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8,
@@ -1260,7 +1352,6 @@ class TableMd extends BlockMd {
                           ),
                         );
 
-                        // Wrap with alignment widget
                         switch (columnAlignments[index]) {
                           case TextAlign.center:
                             content = Center(child: content);
