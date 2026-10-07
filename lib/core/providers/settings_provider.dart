@@ -83,6 +83,7 @@ class SettingsProvider extends ChangeNotifier {
     'SiliconFlow',
     'Gemini',
     'OpenRouter',
+    'Vercel',
     'KelivoIN',
     'Tensdaq',
     'DeepSeek',
@@ -6048,6 +6049,7 @@ class ProviderConfig {
   providerType; // Explicit provider type to avoid misclassification
   final String? chatPath; // openai only
   final bool? useResponseApi; // openai only
+  final bool promptCacheKeyEnabled; // openai only
   final bool? vertexAI; // google only
   final String? location; // google vertex ai only
   final String? projectId; // google vertex ai only
@@ -6139,6 +6141,7 @@ class ProviderConfig {
     this.providerType,
     this.chatPath,
     this.useResponseApi,
+    this.promptCacheKeyEnabled = false,
     this.vertexAI,
     this.location,
     this.projectId,
@@ -6169,6 +6172,16 @@ class ProviderConfig {
   // Sentinel for copyWith nullability control (allow explicit null set)
   static const Object _sentinel = Object();
 
+  /// Resolve a model's wire protocol before assembling history or sending it.
+  ProviderConfig forModelProtocol(String modelId) {
+    if (oauthProvider == OAuthProvider.kimi &&
+        (modelOverrides[modelId] as Map?)?['oauthProtocol'] == 'anthropic' &&
+        providerType != ProviderKind.claude) {
+      return copyWith(providerType: ProviderKind.claude);
+    }
+    return this;
+  }
+
   ProviderConfig copyWith({
     String? id,
     bool? enabled,
@@ -6181,6 +6194,7 @@ class ProviderConfig {
     ProviderKind? providerType,
     String? chatPath,
     bool? useResponseApi,
+    bool? promptCacheKeyEnabled,
     bool? vertexAI,
     String? location,
     String? projectId,
@@ -6220,6 +6234,7 @@ class ProviderConfig {
     providerType: providerType ?? this.providerType,
     chatPath: chatPath ?? this.chatPath,
     useResponseApi: useResponseApi ?? this.useResponseApi,
+    promptCacheKeyEnabled: promptCacheKeyEnabled ?? this.promptCacheKeyEnabled,
     vertexAI: vertexAI ?? this.vertexAI,
     location: location ?? this.location,
     projectId: projectId ?? this.projectId,
@@ -6268,6 +6283,7 @@ class ProviderConfig {
     'providerType': providerType?.name,
     'chatPath': chatPath,
     'useResponseApi': useResponseApi,
+    'promptCacheKeyEnabled': promptCacheKeyEnabled,
     'vertexAI': vertexAI,
     'location': location,
     'projectId': projectId,
@@ -6322,6 +6338,7 @@ class ProviderConfig {
         : null,
     chatPath: json['chatPath'] as String?,
     useResponseApi: json['useResponseApi'] as bool?,
+    promptCacheKeyEnabled: json['promptCacheKeyEnabled'] as bool? ?? false,
     vertexAI: json['vertexAI'] as bool?,
     location: json['location'] as String?,
     projectId: json['projectId'] as String?,
@@ -6416,6 +6433,7 @@ class ProviderConfig {
     if (k.contains('tensdaq')) return 'https://tensdaq-api.x-aio.com/v1';
     if (k.contains('kelivoin')) return 'https://text.pollinations.ai/openai';
     if (k.contains('openrouter')) return 'https://openrouter.ai/api/v1';
+    if (k.contains('vercel')) return 'https://ai-gateway.vercel.sh/v1';
     if (k.contains('aihubmix')) return 'https://aihubmix.com/v1';
     if (k.contains('随想')) return 'https://sui-xiang.com/v1';
     if (k.contains('marucode') || k.contains('muteki')) {
@@ -6561,7 +6579,7 @@ class ProviderConfig {
             apiKeys: const [],
             keyManagement: const KeyManagementConfig(),
             aihubmixAppCodeEnabled: false,
-            balanceEnabled: _defaultBalanceEnabled(key),
+            balanceEnabled: false,
             balanceApiPath: _defaultBalanceApiPath(key),
             balanceResultPath: _defaultBalanceResultPath(key),
             claudePromptCachingEnabled: false,
@@ -6602,7 +6620,7 @@ class ProviderConfig {
             apiKeys: const [],
             keyManagement: const KeyManagementConfig(),
             aihubmixAppCodeEnabled: false,
-            balanceEnabled: _defaultBalanceEnabled(key),
+            balanceEnabled: false,
             balanceApiPath: _defaultBalanceApiPath(key),
             balanceResultPath: _defaultBalanceResultPath(key),
             claudePromptCachingEnabled: false,
@@ -6611,7 +6629,8 @@ class ProviderConfig {
         return ProviderConfig(
           id: key,
           enabled: defaultEnabled(key),
-          name: displayName ?? key,
+          name:
+              displayName ?? (lowerKey == 'vercel' ? 'Vercel AI Gateway' : key),
           apiKey: '',
           baseUrl: _defaultBase(key),
           providerType: ProviderKind.openai,
@@ -6628,7 +6647,7 @@ class ProviderConfig {
           apiKeys: const [],
           keyManagement: const KeyManagementConfig(),
           aihubmixAppCodeEnabled: lowerKey.contains('aihubmix'),
-          balanceEnabled: _defaultBalanceEnabled(key),
+          balanceEnabled: false,
           balanceApiPath: _defaultBalanceApiPath(key),
           balanceResultPath: _defaultBalanceResultPath(key),
           claudePromptCachingEnabled: false,
@@ -6660,14 +6679,5 @@ class ProviderConfig {
       return 'data.available_balance';
     }
     return 'data.total_usage';
-  }
-
-  static bool _defaultBalanceEnabled(String key) {
-    final k = key.toLowerCase();
-    return k.contains('aihubmix') ||
-        k.contains('deepseek') ||
-        k.contains('openrouter') ||
-        k.contains('vercel') ||
-        RegExp(r'kimi|moonshot|月之暗面').hasMatch(k);
   }
 }

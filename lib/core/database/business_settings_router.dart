@@ -567,6 +567,7 @@ final class BusinessSettingsRouter {
           booleans: const {
             'enabled',
             'useResponseApi',
+            'promptCacheKeyEnabled',
             'vertexAI',
             'proxyEnabled',
             'multiKeyEnabled',
@@ -987,7 +988,6 @@ final class BusinessSettingsRouter {
     );
     switch (payload['type']) {
       case 'bing_local':
-        _validateKnownFields(kind, payload, strings: const {'acceptLanguage'});
       case 'kelivo':
         break;
       case 'tavily':

@@ -803,7 +803,7 @@
   "backupPageSelectImportMode": "Select Import Mode",
   "backupPageSelectImportModeDescription": "Choose a restore mode. The chat and file switches determine which components are included.",
   "backupPageOverwriteMode": "Complete Overwrite",
-  "backupPageOverwriteModeDescription": "Replace the selected components; keep unselected components and unrelated local settings",
+  "backupPageOverwriteModeDescription": "Replace the selected components; keep unselected components and unrelated local settings. Replacing chats also clears local unsent drafts.",
   "backupPageMergeMode": "Merge",
   "backupPageMergeModeDescription": "Keep local data and add backup data. Identical conversations are skipped and conflicting conversations receive new IDs.",
   "backupPageRestore": "Restore",
@@ -823,6 +823,17 @@
   "backupPageExporting": "Exporting...",
   "backupProgressCancel": "Cancel",
   "backupProgressCancelled": "Cancelled",
+  "backupProgressFailed": "Operation failed",
+  "backupProgressFailedAt": "Failed during: {phase}",
+  "@backupProgressFailedAt": {
+    "placeholders": {
+      "phase": {
+        "type": "String"
+      }
+    }
+  },
+  "backupProgressCopyError": "Copy error",
+  "backupProgressErrorCopied": "Error copied",
   "backupProgressPreparing": "Preparing",
   "backupProgressSnapshotting": "Creating database snapshot",
   "backupProgressPacking": "Packing",
@@ -1417,6 +1428,12 @@
   "chatInputBarVoiceStopTooltip": "Stop and transcribe to input",
   "chatInputBarVoiceSendTooltip": "Transcribe and send",
   "chatInputBarVoiceTranscribing": "Recognizing…",
+  "chatInputBarVoiceAttachAudioTooltip": "Stop and attach as audio",
+  "chatInputBarVoiceSendAudioTooltip": "Send recording",
+  "chatInputBarVoiceSavingAudio": "Saving audio…",
+  "audioClipPlayTooltip": "Play audio",
+  "audioClipPauseTooltip": "Pause",
+  "audioClipPlaybackFailed": "Couldn't play this audio",
   "chatInputBarImageProcessing": "Processing image",
   "chatInputBarImageMode": "Image mode",
   "chatInputBarDisableImageModeTooltip": "Turn off image mode",
@@ -1829,6 +1846,8 @@
   "providerDetailPageShowTooltip": "Show",
   "providerDetailPageApiPathLabel": "API Path",
   "providerDetailPageResponseApiTitle": "Response API (/responses)",
+  "providerDetailPagePromptCacheKeyTitle": "Send Conversation Cache Key",
+  "providerDetailPagePromptCacheKeyHelp": "Adds a stable prompt_cache_key for each conversation to OpenAI-compatible requests. Enable only if your provider supports it. Custom Body values take precedence; cache hits are not guaranteed.",
   "providerDetailPageAihubmixAppCodeLabel": "APP-Code (10% off)",
   "providerDetailPageAihubmixAppCodeHelp": "Adds header APP-Code requests to get a 10% discount. Only affects AIhubmix.",
   "providerDetailPageClaudePromptCachingTitle": "Claude Prompt Caching",
@@ -4027,7 +4046,7 @@
   "localSnapshotActionPin": "Keep this copy",
   "localSnapshotActionUnpin": "Stop keeping",
   "localSnapshotRestoreTitle": "Restore this copy?",
-  "localSnapshotRestoreMessage": "Your current chats and settings will be replaced by this copy from {when}. A copy of what you have now is saved first, so this can be undone.",
+  "localSnapshotRestoreMessage": "Your current chats and settings will be replaced by this copy from {when}. A copy of the current chats and settings is saved first. Unsent drafts are excluded from copies and will be cleared.",
   "@localSnapshotRestoreMessage": {
     "placeholders": {
       "when": {
@@ -5611,5 +5630,34 @@
   "phoneControlAssistantHint": "Both permissions are required: enable Kelivo phone control in system Accessibility settings, then enable Phone Control under your assistant’s Local Tools (also available in the chat tools menu). Each assistant is configured separately. Keep the phone unlocked while running a task.",
   "phoneControlRestrictedTitle": "Accessibility switch unavailable?",
   "phoneControlRestrictedHint": "For some downloaded APKs, Android requires “Allow restricted settings” in the app info menu first. Tap to open Kelivo’s app info, then return to Accessibility settings.",
-  "phoneControlEnableAssistant": "Allow this assistant to use phone control"
+  "phoneControlEnableAssistant": "Allow this assistant to use phone control",
+  "composerDraftLabel": "Draft",
+  "composerDraftRecovered": "An unsent message was recovered.",
+  "composerDraftRestore": "Continue editing",
+  "composerDraftDiscard": "Discard",
+  "composerDraftSaveFailed": "Your latest draft could not be saved. It is still in this window.",
+  "composerDraftRetry": "Retry saving",
+  "composerDraftConflictTitle": "This conversation already has a draft",
+  "composerDraftConflictBody": "Append keeps both texts and attachments. Replace discards the existing draft. Nothing is sent automatically.",
+  "composerDraftAppend": "Append",
+  "composerDraftReplace": "Replace draft",
+  "composerDraftMissingFile": "An attachment is unavailable. Remove it or choose the file again.",
+  "composerDraftMessageMissing": "The message being edited no longer exists. Copy the text to a new message or discard this edit.",
+  "composerDraftDeleteNotice": "Unsent drafts in these conversations will also be deleted.",
+  "mcpOAuthSettings": "OAuth settings",
+  "mcpOAuthAutomatic": "Automatic",
+  "mcpOAuthMetadataUrl": "Client metadata document URL",
+  "mcpOAuthClientAuthentication": "Client authentication",
+  "mcpOAuthPublicClient": "Public client",
+  "mcpOAuthRedirectUri": "Local callback URL (optional)",
+  "mcpOAuthFillRedirectExample": "Fill example",
+  "mcpOAuthRedirectHint": "Leave empty to use the platform default. Use an HTTP loopback URL if the service only allows localhost callbacks. Port 0 selects an available port; a pre-registered client may require a fixed port.",
+  "mcpOAuthClientIdRequired": "Enter a client ID or choose automatic registration.",
+  "mcpOAuthMetadataUrlInvalid": "Enter an HTTPS metadata document URL with a path.",
+  "mcpOAuthSecretRequired": "This client authentication method requires a client secret.",
+  "mcpOAuthRedirectInvalid": "Use an HTTP callback on localhost, 127.0.0.1 or [::1], without credentials, query parameters or a fragment.",
+  "mcpOAuthDiscovering": "Discovering authorization server…",
+  "mcpOAuthRegistering": "Preparing authorization…",
+  "mcpOAuthWaitingBrowser": "Waiting for browser authorization…",
+  "mcpOAuthExchangingToken": "Completing sign-in…"
 }

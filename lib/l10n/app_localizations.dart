@@ -3565,7 +3565,7 @@ abstract class AppLocalizations {
   /// No description provided for @backupPageOverwriteModeDescription.
   ///
   /// In en, this message translates to:
-  /// **'Replace the selected components; keep unselected components and unrelated local settings'**
+  /// **'Replace the selected components; keep unselected components and unrelated local settings. Replacing chats also clears local unsent drafts.'**
   String get backupPageOverwriteModeDescription;
 
   /// No description provided for @backupPageMergeMode.
@@ -3645,6 +3645,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancelled'**
   String get backupProgressCancelled;
+
+  /// No description provided for @backupProgressFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Operation failed'**
+  String get backupProgressFailed;
+
+  /// No description provided for @backupProgressFailedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed during: {phase}'**
+  String backupProgressFailedAt(String phase);
+
+  /// No description provided for @backupProgressCopyError.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy error'**
+  String get backupProgressCopyError;
+
+  /// No description provided for @backupProgressErrorCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Error copied'**
+  String get backupProgressErrorCopied;
 
   /// No description provided for @backupProgressPreparing.
   ///
@@ -5824,6 +5848,42 @@ abstract class AppLocalizations {
   /// **'Recognizing…'**
   String get chatInputBarVoiceTranscribing;
 
+  /// No description provided for @chatInputBarVoiceAttachAudioTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop and attach as audio'**
+  String get chatInputBarVoiceAttachAudioTooltip;
+
+  /// No description provided for @chatInputBarVoiceSendAudioTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Send recording'**
+  String get chatInputBarVoiceSendAudioTooltip;
+
+  /// No description provided for @chatInputBarVoiceSavingAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving audio…'**
+  String get chatInputBarVoiceSavingAudio;
+
+  /// No description provided for @audioClipPlayTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Play audio'**
+  String get audioClipPlayTooltip;
+
+  /// No description provided for @audioClipPauseTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get audioClipPauseTooltip;
+
+  /// No description provided for @audioClipPlaybackFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t play this audio'**
+  String get audioClipPlaybackFailed;
+
   /// No description provided for @chatInputBarImageProcessing.
   ///
   /// In en, this message translates to:
@@ -7632,6 +7692,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Response API (/responses)'**
   String get providerDetailPageResponseApiTitle;
+
+  /// No description provided for @providerDetailPagePromptCacheKeyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Conversation Cache Key'**
+  String get providerDetailPagePromptCacheKeyTitle;
+
+  /// No description provided for @providerDetailPagePromptCacheKeyHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Adds a stable prompt_cache_key for each conversation to OpenAI-compatible requests. Enable only if your provider supports it. Custom Body values take precedence; cache hits are not guaranteed.'**
+  String get providerDetailPagePromptCacheKeyHelp;
 
   /// No description provided for @providerDetailPageAihubmixAppCodeLabel.
   ///
@@ -16738,7 +16810,7 @@ abstract class AppLocalizations {
   /// No description provided for @localSnapshotRestoreMessage.
   ///
   /// In en, this message translates to:
-  /// **'Your current chats and settings will be replaced by this copy from {when}. A copy of what you have now is saved first, so this can be undone.'**
+  /// **'Your current chats and settings will be replaced by this copy from {when}. A copy of the current chats and settings is saved first. Unsent drafts are excluded from copies and will be cleared.'**
   String localSnapshotRestoreMessage(String when);
 
   /// No description provided for @localSnapshotRestorePreparing.
@@ -22793,6 +22865,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Allow this assistant to use phone control'**
   String get phoneControlEnableAssistant;
+
+  /// No description provided for @composerDraftLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get composerDraftLabel;
+
+  /// No description provided for @composerDraftRecovered.
+  ///
+  /// In en, this message translates to:
+  /// **'An unsent message was recovered.'**
+  String get composerDraftRecovered;
+
+  /// No description provided for @composerDraftRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue editing'**
+  String get composerDraftRestore;
+
+  /// No description provided for @composerDraftDiscard.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get composerDraftDiscard;
+
+  /// No description provided for @composerDraftSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your latest draft could not be saved. It is still in this window.'**
+  String get composerDraftSaveFailed;
+
+  /// No description provided for @composerDraftRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry saving'**
+  String get composerDraftRetry;
+
+  /// No description provided for @composerDraftConflictTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This conversation already has a draft'**
+  String get composerDraftConflictTitle;
+
+  /// No description provided for @composerDraftConflictBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Append keeps both texts and attachments. Replace discards the existing draft. Nothing is sent automatically.'**
+  String get composerDraftConflictBody;
+
+  /// No description provided for @composerDraftAppend.
+  ///
+  /// In en, this message translates to:
+  /// **'Append'**
+  String get composerDraftAppend;
+
+  /// No description provided for @composerDraftReplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace draft'**
+  String get composerDraftReplace;
+
+  /// No description provided for @composerDraftMissingFile.
+  ///
+  /// In en, this message translates to:
+  /// **'An attachment is unavailable. Remove it or choose the file again.'**
+  String get composerDraftMissingFile;
+
+  /// No description provided for @composerDraftMessageMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'The message being edited no longer exists. Copy the text to a new message or discard this edit.'**
+  String get composerDraftMessageMissing;
+
+  /// No description provided for @composerDraftDeleteNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsent drafts in these conversations will also be deleted.'**
+  String get composerDraftDeleteNotice;
+
+  /// No description provided for @mcpOAuthSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'OAuth settings'**
+  String get mcpOAuthSettings;
+
+  /// No description provided for @mcpOAuthAutomatic.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic'**
+  String get mcpOAuthAutomatic;
+
+  /// No description provided for @mcpOAuthMetadataUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Client metadata document URL'**
+  String get mcpOAuthMetadataUrl;
+
+  /// No description provided for @mcpOAuthClientAuthentication.
+  ///
+  /// In en, this message translates to:
+  /// **'Client authentication'**
+  String get mcpOAuthClientAuthentication;
+
+  /// No description provided for @mcpOAuthPublicClient.
+  ///
+  /// In en, this message translates to:
+  /// **'Public client'**
+  String get mcpOAuthPublicClient;
+
+  /// No description provided for @mcpOAuthRedirectUri.
+  ///
+  /// In en, this message translates to:
+  /// **'Local callback URL (optional)'**
+  String get mcpOAuthRedirectUri;
+
+  /// No description provided for @mcpOAuthFillRedirectExample.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill example'**
+  String get mcpOAuthFillRedirectExample;
+
+  /// No description provided for @mcpOAuthRedirectHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty to use the platform default. Use an HTTP loopback URL if the service only allows localhost callbacks. Port 0 selects an available port; a pre-registered client may require a fixed port.'**
+  String get mcpOAuthRedirectHint;
+
+  /// No description provided for @mcpOAuthClientIdRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a client ID or choose automatic registration.'**
+  String get mcpOAuthClientIdRequired;
+
+  /// No description provided for @mcpOAuthMetadataUrlInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an HTTPS metadata document URL with a path.'**
+  String get mcpOAuthMetadataUrlInvalid;
+
+  /// No description provided for @mcpOAuthSecretRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'This client authentication method requires a client secret.'**
+  String get mcpOAuthSecretRequired;
+
+  /// No description provided for @mcpOAuthRedirectInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Use an HTTP callback on localhost, 127.0.0.1 or [::1], without credentials, query parameters or a fragment.'**
+  String get mcpOAuthRedirectInvalid;
+
+  /// No description provided for @mcpOAuthDiscovering.
+  ///
+  /// In en, this message translates to:
+  /// **'Discovering authorization server…'**
+  String get mcpOAuthDiscovering;
+
+  /// No description provided for @mcpOAuthRegistering.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing authorization…'**
+  String get mcpOAuthRegistering;
+
+  /// No description provided for @mcpOAuthWaitingBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for browser authorization…'**
+  String get mcpOAuthWaitingBrowser;
+
+  /// No description provided for @mcpOAuthExchangingToken.
+  ///
+  /// In en, this message translates to:
+  /// **'Completing sign-in…'**
+  String get mcpOAuthExchangingToken;
 }
 
 class _AppLocalizationsDelegate
